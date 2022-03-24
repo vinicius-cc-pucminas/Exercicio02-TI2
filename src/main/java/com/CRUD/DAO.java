@@ -16,8 +16,8 @@ public class DAO {
 		int porta = 5432; 
 		String url = "jdbc:postgresql://" + server + ":" + porta +"/" + db;
 
-		String user = "usuario";
-		String pass = "senha"; 
+		String user = "postgres";
+		String pass = "21801886"; 
 		
 		boolean status = false; 
 		
@@ -55,7 +55,7 @@ public class DAO {
 			Statement st = conexao.createStatement();
 			st.executeUpdate("INSERT INTO fazenda (codigo, fazendeiro, vacas, galinhas, porcos) "
 					       + "VALUES ("+fazenda.getCodigo()+ ", '" + fazenda.getFazendeiro() + "', "  
-					       + fazenda.getVacas() + ", " + fazenda.getGalinhas() + " , " + fazenda.getPorcos + ");");
+					       + fazenda.getVacas() + ", " + fazenda.getGalinhas() + " , " + fazenda.getPorcos() + ");");
 			st.close();
 			status = true;
 		} catch (SQLException u) {  
@@ -71,7 +71,7 @@ public class DAO {
 		try {  
 			Statement st = conexao.createStatement();
 			String sql = "UPDATE fazenda SET fazendeiro = '" + fazenda.getFazendeiro() + "', vacas = "  
-				       + fazenda.getVacas() + ", galinhas = " + fazenda.getGalinhas() + " WHERE codigo = " + fazenda.getCodigo();
+				       + fazenda.getVacas() + ", porcos = " + fazenda.getPorcos() + ", galinhas = " + fazenda.getGalinhas() + " WHERE codigo = " + fazenda.getCodigo();
 			st.executeUpdate(sql);
 			st.close();
 			status = true;
@@ -95,6 +95,23 @@ public class DAO {
 		}
 		
 		return status;
+	}
+	
+	public boolean getFazenda(int codigo) {
+		boolean exists = false;
+		
+		try {
+			Statement st = conexao.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ResultSet rs = st.executeQuery("SELECT * FROM fazenda WHERE codigo = " + codigo);		
+	         if(rs.next() && rs.getRow() > 0){
+	             exists = true;
+	          }
+	          st.close();
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+		}
+		
+		return exists; 
 	}
 	
 	public Fazenda[] getFazendas() {
